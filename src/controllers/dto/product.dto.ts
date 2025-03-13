@@ -1,8 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { v4 } from 'uuid';
-
+export enum Sex {
+  Male = 'Male',
+  Female = 'Female',
+  Unisex = 'Unisex',
+}
 export class CreateProductDto {
-  @ApiProperty({ example: v4(), description: 'Unique Product ID' })
+  @ApiPropertyOptional({ example: v4(), description: 'Unique Product ID' })
   id: string;
 
   @ApiProperty({ example: 'Que', description: 'Name' })
@@ -18,48 +22,50 @@ export class CreateProductDto {
     description: 'category',
   })
   categoryId: string;
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Black',
     description: 'color',
   })
   color: string;
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Black and White',
     description: 'list color',
   })
   colors: string[];
   @ApiProperty({
-    example: 'Male',
+    example: Sex.Unisex,
     description: 'Male, Female or Unisex',
+    enum: Sex,
+    default: Sex.Unisex,
   })
-  sex: string;
+  sex: Sex;
   @ApiProperty({
     example: '20000',
     description: 'price',
   })
   price: number;
-  @ApiProperty({
+  @ApiPropertyOptional({
     example:
       'Look like a visionary CEO and wear the same black t-shirt every day.',
     description: 'description',
   })
   description: string;
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: [v4()],
     description: 'list images',
   })
   images: string[];
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 12,
     description: 'sum reviews',
   })
   reviews: number;
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 2,
     description: 'rating of product',
   })
   rating: number;
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 10,
     description: 'size of product',
   })
@@ -67,9 +73,10 @@ export class CreateProductDto {
   @ApiProperty({
     example: true,
     description: 'active or inactive',
+    default: true,
   })
   active: boolean;
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: v4(),
     description: 'parent product',
   })

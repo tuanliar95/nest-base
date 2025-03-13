@@ -8,10 +8,11 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserService } from 'src/services/user.service';
-import { CreateUserDto, DeleteMultiDto, Paging } from './dto';
+import { CreateUserDto, DeleteMultiDto, Paging, ResponseListDto } from './dto';
 
 @Controller('users')
 export class UserController {
@@ -61,8 +62,17 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
-  async getAllUsers(@Param() params: Paging) {
-    return await this.userService.getAllUsers(params);
+  @ApiResponse({
+    status: 200,
+    description: 'Users retrieved successfully',
+    type: ResponseListDto,
+  })
+  async getAllUsers(@Query() params: Paging) {
+    const userRes = await this.userService.getAllUsers(params);
+    return {
+      code: 200,
+      message: 'Users retrieved successfully',
+      data: userRes,
+    };
   }
 }

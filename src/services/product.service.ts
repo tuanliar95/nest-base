@@ -19,7 +19,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore/lite';
-import { CreateProductDto, Paging } from 'src/controllers/dto';
+import { CreateProductDto, Pagination, Paging } from 'src/controllers/dto';
 import { v4 } from 'uuid';
 
 @Injectable()
@@ -77,16 +77,24 @@ export class ProductService {
     await Promise.all(deletePromises);
   }
 
-  async getAllProducts(params: Paging): Promise<any[]> {
-    const { page, limit: limitNumber, sort = '-createdAt', keyword } = params;
+  async getAllProducts(params: Paging): Promise<Pagination<any>> {
+    const {
+      page: current,
+      limit: limitNumber,
+      sort = '-createdAt',
+      keyword,
+    } = params;
+    const page = Number(current);
+    const limitOffset = Number(limitNumber);
     const sortField = sort.startsWith('-') ? sort.substring(1) : sort;
     const sortOrder = sort.startsWith('-') ? 'desc' : 'asc';
     const usersCollection = collection(this.firestore, 'products');
     const offset = (page - 1) * limitNumber;
+    let totalSnapshot = await getDocs(usersCollection);
     let productsQuery = query(
       usersCollection,
       orderBy(sortField, sortOrder),
-      limit(limitNumber),
+      limit(limitOffset),
     );
     if (keyword) {
       productsQuery = query(
@@ -94,9 +102,19 @@ export class ProductService {
         where('name', '>=', keyword),
         where('name', '<=', keyword + '\uf8ff'),
         orderBy(sortField, sortOrder),
-        limit(limitNumber),
+        limit(limitOffset),
+      );
+      totalSnapshot = await getDocs(
+        query(
+          usersCollection,
+          where('name', '>=', keyword),
+          where('name', '<=', keyword + '\uf8ff'),
+          orderBy(sortField, sortOrder),
+        ),
       );
     }
+    const totalCount = totalSnapshot.size;
+    const totalPages = Math.ceil(totalCount / limitOffset);
     if (offset > 0) {
       const snapshot = await getDocs(
         query(usersCollection, orderBy(sortField, sortOrder), limit(offset)),
@@ -106,11 +124,17 @@ export class ProductService {
         usersCollection,
         orderBy(sortField, sortOrder),
         startAfter(lastVisible),
-        limit(limitNumber),
+        limit(limitOffset),
       );
     }
 
     const snapshot = await getDocs(productsQuery);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return {
+      page,
+      limit: limitOffset,
+      count: totalCount,
+      totalPages,
+      rows: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+    };
   }
 }

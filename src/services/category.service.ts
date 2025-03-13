@@ -19,14 +19,14 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore/lite';
-import { Paging } from 'src/controllers/dto';
+import { CreateCategoryDto, Pagination, Paging } from 'src/controllers/dto';
 import { v4 } from 'uuid';
 
 @Injectable()
 export class CategoryService {
   constructor(@Inject('FIRESTORE_DB') private readonly firestore: Firestore) {}
 
-  async createCategory(categoryData: any): Promise<void> {
+  async createCategory(categoryData: CreateCategoryDto): Promise<void> {
     const categoryId = v4();
     const categoryRef = doc(this.firestore, 'categories', categoryId);
     const categoryWithTimestamps = {
@@ -68,16 +68,25 @@ export class CategoryService {
     await Promise.all(deletePromises);
   }
 
-  async getAllCategories(params: Paging): Promise<any[]> {
-    const { page, limit: limitNumber, sort = '-createdAt', keyword } = params;
+  async getAllCategories(params: Paging): Promise<Pagination<any>> {
+    const {
+      page: current,
+      limit: limitNumber,
+      sort = '-createdAt',
+      keyword,
+    } = params;
+    const page = Number(current);
+    const limitOffset = Number(limitNumber);
     const sortField = sort.startsWith('-') ? sort.substring(1) : sort;
     const sortOrder = sort.startsWith('-') ? 'desc' : 'asc';
     const usersCollection = collection(this.firestore, 'categories');
     const offset = (page - 1) * limitNumber;
+    let totalSnapshot = await getDocs(usersCollection);
+
     let categoriesQuery = query(
       usersCollection,
       orderBy(sortField, sortOrder),
-      limit(limitNumber),
+      limit(limitOffset),
     );
     if (keyword) {
       categoriesQuery = query(
@@ -85,9 +94,19 @@ export class CategoryService {
         where('name', '>=', keyword),
         where('name', '<=', keyword + '\uf8ff'),
         orderBy(sortField, sortOrder),
-        limit(limitNumber),
+        limit(limitOffset),
+      );
+      totalSnapshot = await getDocs(
+        query(
+          usersCollection,
+          where('name', '>=', keyword),
+          where('name', '<=', keyword + '\uf8ff'),
+          orderBy(sortField, sortOrder),
+        ),
       );
     }
+    const totalCount = totalSnapshot.size;
+    const totalPages = Math.ceil(totalCount / limitOffset);
     if (offset > 0) {
       const snapshot = await getDocs(
         query(usersCollection, orderBy(sortField, sortOrder), limit(offset)),
@@ -97,11 +116,16 @@ export class CategoryService {
         usersCollection,
         orderBy(sortField, sortOrder),
         startAfter(lastVisible),
-        limit(limitNumber),
+        limit(limitOffset),
       );
     }
-
     const snapshot = await getDocs(categoriesQuery);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return {
+      page,
+      limit: limitOffset,
+      count: totalCount,
+      totalPages,
+      rows: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+    };
   }
 }

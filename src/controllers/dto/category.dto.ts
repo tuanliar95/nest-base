@@ -11,6 +11,7 @@ export class CreateCategoryDto {
   @ApiProperty({
     example: true,
     description: 'active or inactive',
+    default: true,
   })
   active: boolean;
 }
