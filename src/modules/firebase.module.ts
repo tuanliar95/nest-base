@@ -8,7 +8,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Global()
 @Module({
-  imports: [ConfigModule.forRoot()],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env', // Default to .env if not in production
+      isGlobal: true, // Makes ConfigModule available throughout the app
+    }),
+  ],
   providers: [
     {
       provide: 'FIRESTORE_DB',
