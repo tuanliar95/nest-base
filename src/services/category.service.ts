@@ -19,77 +19,68 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore/lite';
-import { CreateProductDto, Paging } from 'src/controllers/dto';
+import { Paging } from 'src/controllers/dto';
 import { v4 } from 'uuid';
 
 @Injectable()
-export class ProductService {
+export class CategoryService {
   constructor(@Inject('FIRESTORE_DB') private readonly firestore: Firestore) {}
 
-  async createProduct(productData: CreateProductDto): Promise<void> {
-    const categoryRef = doc(
-      this.firestore,
-      'categories',
-      productData.categoryId,
-    );
-    const categoryDoc = await getDoc(categoryRef);
-    if (!categoryDoc.exists()) {
-      throw new Error(`Category with ID ${productData.categoryId} not found`);
-    }
-    const productId = v4();
-    const productRef = doc(this.firestore, 'products', productId);
-    const productWithTimestamps = {
-      ...productData,
+  async createCategory(categoryData: any): Promise<void> {
+    const categoryId = v4();
+    const categoryRef = doc(this.firestore, 'categories', categoryId);
+    const categoryWithTimestamps = {
+      ...categoryData,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
-    await setDoc(productRef, productWithTimestamps);
+    await setDoc(categoryRef, categoryWithTimestamps);
   }
 
-  async getProduct(productId: string): Promise<any> {
-    const productRef = doc(this.firestore, 'products', productId);
-    const productDoc = await getDoc(productRef);
-    if (!productDoc.exists()) {
-      throw new Error(`Product with ID ${productId} not found`);
+  async getCategory(categoryId: string): Promise<any> {
+    const categoryRef = doc(this.firestore, 'categories', categoryId);
+    const categoryDoc = await getDoc(categoryRef);
+    if (!categoryDoc.exists()) {
+      throw new Error(`Category with ID ${categoryId} not found`);
     }
-    return productDoc.data();
+    return categoryDoc.data();
   }
 
-  async updateProduct(productId: string, updatedData: any): Promise<void> {
-    const productRef = doc(this.firestore, 'products', productId);
+  async updateCategory(categoryId: string, updatedData: any): Promise<void> {
+    const categoryRef = doc(this.firestore, 'categories', categoryId);
     const updateWithTimestamps = {
       ...updatedData,
       updatedAt: serverTimestamp(),
     };
-    await updateDoc(productRef, updateWithTimestamps);
+    await updateDoc(categoryRef, updateWithTimestamps);
   }
 
-  async deleteProduct(productId: string): Promise<void> {
-    const productRef = doc(this.firestore, 'products', productId);
-    await deleteDoc(productRef);
+  async deleteCategory(categoryId: string): Promise<void> {
+    const categoryRef = doc(this.firestore, 'categories', categoryId);
+    await deleteDoc(categoryRef);
   }
 
-  async deleteProducts(productIds: string[]): Promise<void> {
-    const deletePromises = productIds.map((productId) => {
-      const productRef = doc(this.firestore, 'products', productId);
-      return deleteDoc(productRef);
+  async deleteCategories(categoryIds: string[]): Promise<void> {
+    const deletePromises = categoryIds.map((categoryId) => {
+      const categoryRef = doc(this.firestore, 'categories', categoryId);
+      return deleteDoc(categoryRef);
     });
     await Promise.all(deletePromises);
   }
 
-  async getAllProducts(params: Paging): Promise<any[]> {
+  async getAllCategories(params: Paging): Promise<any[]> {
     const { page, limit: limitNumber, sort = '-createdAt', keyword } = params;
     const sortField = sort.startsWith('-') ? sort.substring(1) : sort;
     const sortOrder = sort.startsWith('-') ? 'desc' : 'asc';
-    const usersCollection = collection(this.firestore, 'products');
+    const usersCollection = collection(this.firestore, 'categories');
     const offset = (page - 1) * limitNumber;
-    let productsQuery = query(
+    let categoriesQuery = query(
       usersCollection,
       orderBy(sortField, sortOrder),
       limit(limitNumber),
     );
     if (keyword) {
-      productsQuery = query(
+      categoriesQuery = query(
         usersCollection,
         where('name', '>=', keyword),
         where('name', '<=', keyword + '\uf8ff'),
@@ -102,7 +93,7 @@ export class ProductService {
         query(usersCollection, orderBy(sortField, sortOrder), limit(offset)),
       );
       const lastVisible = snapshot.docs[snapshot.docs.length - 1];
-      productsQuery = query(
+      categoriesQuery = query(
         usersCollection,
         orderBy(sortField, sortOrder),
         startAfter(lastVisible),
@@ -110,7 +101,7 @@ export class ProductService {
       );
     }
 
-    const snapshot = await getDocs(productsQuery);
+    const snapshot = await getDocs(categoriesQuery);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   }
 }

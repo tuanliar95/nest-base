@@ -18,7 +18,7 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new user' })
+  @ApiOperation({ summary: 'Create a new product' })
   @ApiBody({ type: CreateProductDto })
   @ApiResponse({ status: 201, description: 'Product created successfully' })
   async createProduct(@Body() body: CreateProductDto) {
@@ -27,16 +27,16 @@ export class ProductController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiOperation({ summary: 'Get product by ID' })
   @ApiResponse({ status: 200, description: 'Product retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Product not found' })
   async getProduct(@Param('id') id: string) {
-    const user = await this.productService.getProduct(id);
-    return user ? user : { message: 'Product not found' };
+    const product = await this.productService.getProduct(id);
+    return product ? product : { message: 'Product not found' };
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update a user' })
+  @ApiOperation({ summary: 'Update a product' })
   @ApiBody({ type: CreateProductDto })
   @ApiResponse({ status: 200, description: 'Product updated successfully' })
   async updateProduct(
