@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -21,6 +22,7 @@ import {
 } from 'firebase/firestore/lite';
 import { Pagination, Paging } from 'src/controllers/dto';
 import { v4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -123,5 +125,25 @@ export class UserService {
       totalPages,
       rows: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
     };
+  }
+  async findOne(email: string): Promise<any> {
+    const userRef = collection(this.firestore, 'users');
+    const userQuery = query(userRef, where('email', '==', email));
+    const userSnapshot = await getDocs(userQuery);
+
+    if (userSnapshot.empty) {
+      throw new Error(`User with email ${email} not found`);
+    }
+
+    const userDoc = userSnapshot.docs[0];
+    return { id: userDoc.id, ...userDoc.data() };
+  }
+  async validateUser(email: string, password: string): Promise<any | null> {
+    const user = await this.findOne(email);
+    const userPassword: string = user.password || '123456aA@';
+    if (user && (await bcrypt.compare(password, userPassword))) {
+      return user;
+    }
+    return null;
   }
 }

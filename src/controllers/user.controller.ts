@@ -9,10 +9,12 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserService } from 'src/services/user.service';
 import { CreateUserDto, DeleteMultiDto, Paging, ResponseListDto } from './dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -60,7 +62,8 @@ export class UserController {
     return { message: 'User deleted successfully' };
   }
 
-  @Get()
+  @Get('protected')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({
     status: 200,
