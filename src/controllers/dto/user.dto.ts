@@ -13,3 +13,12 @@ export class CreateUserDto {
   })
   email: string;
 }
+export class LoginDto {
+  @ApiProperty({
+    example: 'john@example.com',
+    description: 'User email address',
+  })
+  email: string;
+  @ApiProperty({ example: 'string', description: 'password ' })
+  password: string;
+}

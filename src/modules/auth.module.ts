@@ -1,20 +1,26 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Module } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from 'src/auth/jwt.strategy';
-import { LocalStrategy } from 'src/auth/local.strategy';
-import { AuthController } from 'src/controllers';
-import { AuthService, UserService } from 'src/services';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthService } from 'src/services/auth.service';
+import { AuthController } from 'src/controllers/auth.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersModule } from './user.module';
 
 @Module({
   imports: [
-    PassportModule,
-    JwtModule.register({
-      secret: process.env.SECRET_KEY,
-      signOptions: { expiresIn: '1h' },
+    UsersModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '60s' },
+        global: true,
+      }),
+      inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, UserService],
+  providers: [AuthService],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}

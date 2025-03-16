@@ -1,12 +1,15 @@
-import { ApiProperty } from '@nestjs/swagger';
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { v4 } from 'uuid';
 
 export class CreateCategoryDto {
-  @ApiProperty({ example: v4(), description: 'Unique Category ID' })
+  @ApiPropertyOptional({ example: v4(), description: 'Unique Category ID' })
   id: string;
 
   @ApiProperty({ example: 'Clother', description: 'Name' })
   name: string;
+  @ApiProperty({ example: 'XXYAL', description: 'Code' })
+  code: string;
 
   @ApiProperty({
     example: true,

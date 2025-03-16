@@ -1,14 +1,15 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { LocalAuthGuard } from 'src/auth/local-auth.guard';
-import { AuthService } from 'src/services';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { AuthService } from 'src/services/auth.service';
+import { LoginDto } from './dto';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-
-  @UseGuards(LocalAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: LoginDto })
   @Post('login')
-  login(@Request() req: { user: { email: string; id: number } }) {
-    return this.authService.login(req.user);
+  login(@Body() user: { email: string; password: string }) {
+    return this.authService.signIn(user.email, user.password);
   }
 }
