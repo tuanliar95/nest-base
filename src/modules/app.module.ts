@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from 'src/auth/jwt.strategy';
 import * as controllers from 'src/controllers';
 import * as services from 'src/services';
 import { FirebaseModule } from './firebase.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from 'src/auth/jwt.strategy';
 
 @Module({
   imports: [
