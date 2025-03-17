@@ -9,7 +9,8 @@ import { JwtStrategy } from 'src/auth/jwt.strategy';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env',
+      envFilePath:
+        process.env.NODE_ENV === 'production' ? '.env.production' : '.env',
       isGlobal: true,
     }),
     FirebaseModule,

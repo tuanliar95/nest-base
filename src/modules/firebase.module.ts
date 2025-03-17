@@ -10,7 +10,7 @@ import { getFirestore } from 'firebase/firestore/lite';
 @Module({
   // imports: [
   //   ConfigModule.forRoot({
-  //     envFilePath: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env', // Default to .env if not in production
+  //     envFilePath: process.env.NODE_ENV === 'production' ? '.env.production' : '.env', // Default to .env if not in production
   //     isGlobal: true, // Makes ConfigModule available throughout the app
   //   }),
   // ],

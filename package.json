@@ -17,7 +17,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/jest/bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "env": "rm -f .env.prod && echo API_KEY= AIzaSyDvt5D2QN7uqdhtp4ZL9VR8y5wRe228o20 > .env.prod && echo AUTH_DOMAIN= my-store-5fa75.firebaseapp.com >> .env.prod && echo PROJECT_ID= my-store-5fa75 >> .env.prod && echo STORAGE_BUCKET= my-store-5fa75.firebasestorage.app >> .env.prod && echo MESSAGING_SENDER_ID= 331764581660 >> .env.prod && echo APP_ID= 1:331764581660:web:d84e59d3b6fd4607f466d9 >> .env.prod && echo JWT_SECRET= a296859cadc091b25f92956ae2bd56f9a5f72394af3c2fb2db082f4b83d10247 >> .env.prod && cat .env.prod"
+    "env": "rm -f .env.production && echo API_KEY= AIzaSyDvt5D2QN7uqdhtp4ZL9VR8y5wRe228o20 > .env.production && echo AUTH_DOMAIN= my-store-5fa75.firebaseapp.com >> .env.production && echo PROJECT_ID= my-store-5fa75 >> .env.production && echo STORAGE_BUCKET= my-store-5fa75.firebasestorage.app >> .env.production && echo MESSAGING_SENDER_ID= 331764581660 >> .env.production && echo APP_ID= 1:331764581660:web:d84e59d3b6fd4607f466d9 >> .env.production && echo JWT_SECRET= a296859cadc091b25f92956ae2bd56f9a5f72394af3c2fb2db082f4b83d10247 >> .env.production && cat .env.production"
   },
   "engines": {
     "npm": ">=10.0.0",
