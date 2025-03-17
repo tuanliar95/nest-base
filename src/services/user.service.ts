@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -19,15 +20,18 @@ import {
   where,
 } from 'firebase/firestore/lite';
 import { Pagination, Paging } from 'src/controllers/dto';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class UserService {
   constructor(@Inject('FIRESTORE_DB') private readonly firestore: Firestore) {}
 
   async createUser(userData: any): Promise<void> {
-    const userRef = doc(this.firestore, 'users');
+    const userId = v4();
+    const userRef = doc(this.firestore, 'users', userId);
     const userWithTimestamps = {
       ...userData,
+      roles: userData.roles?.length ? userData.roles : ['user'],
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
@@ -125,14 +129,15 @@ export class UserService {
       rows: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
     };
   }
-  async findOne(email: string): Promise<any> {
+  async findOne(email: string, fallBack: boolean = false): Promise<any> {
     const userRef = collection(this.firestore, 'users');
     const userQuery = query(userRef, where('email', '==', email));
 
     const userSnapshot = await getDocs(userQuery);
 
     if (userSnapshot.empty) {
-      throw new Error(`User with email ${email} not found`);
+      if (fallBack) return null;
+      else throw new Error(`User with email ${email} not found`);
     }
 
     const userDoc = userSnapshot.docs[0];
@@ -142,6 +147,7 @@ export class UserService {
       roles: userDoc.data()?.roles?.length ? userDoc.data()?.roles : ['user'],
     };
   }
+
   async validateUser(email: string, password: string): Promise<any | null> {
     const user = await this.findOne(email);
     const userPassword: string = user?.password || '123456aA@';

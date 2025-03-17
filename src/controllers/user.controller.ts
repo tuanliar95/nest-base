@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -37,12 +39,15 @@ export class UserController {
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, description: 'User created successfully' })
-  async createUser(@Body() body: { name: string; email: string }) {
-    await this.userService.createUser({
-      name: body.name,
-      email: body.email,
-    });
-    return { message: 'User created successfully' };
+  async createUser(@Body() body: CreateUserDto) {
+    const existingUser = await this.userService.findOne(body.email, true);
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
+    } else {
+      const { id: userId, ...payload } = body;
+      await this.userService.createUser(payload);
+      return { message: 'User created successfully' };
+    }
   }
 
   @Get(':id')
@@ -65,7 +70,8 @@ export class UserController {
     @Param('id') id: string,
     @Body() body: Partial<CreateUserDto>,
   ) {
-    await this.userService.updateUser(id, body);
+    const { id: userId, ...payload } = body;
+    await this.userService.updateUser(id, payload);
     return { message: 'User updated successfully' };
   }
 
