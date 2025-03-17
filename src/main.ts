@@ -2,6 +2,11 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './modules/app.module';
+import * as dotenv from 'dotenv';
+
+dotenv.config({
+  path: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env',
+});
 async function bootstrap() {
   console.log('hahahahah', process.env.NODE_ENV);
 
