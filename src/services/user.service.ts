@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Inject, Injectable } from '@nestjs/common';
 import {
   Firestore,
@@ -21,15 +19,13 @@ import {
   where,
 } from 'firebase/firestore/lite';
 import { Pagination, Paging } from 'src/controllers/dto';
-import { v4 } from 'uuid';
 
 @Injectable()
 export class UserService {
   constructor(@Inject('FIRESTORE_DB') private readonly firestore: Firestore) {}
 
   async createUser(userData: any): Promise<void> {
-    const userId = v4();
-    const userRef = doc(this.firestore, 'users', userId);
+    const userRef = doc(this.firestore, 'users');
     const userWithTimestamps = {
       ...userData,
       createdAt: serverTimestamp(),
@@ -43,7 +39,11 @@ export class UserService {
     if (!userDoc.exists()) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    return userDoc.data();
+    return {
+      id: userDoc.id,
+      ...userDoc.data(),
+      roles: userDoc.data()?.roles?.length ? userDoc.data()?.roles : ['user'],
+    };
   }
 
   async updateUser(userId: string, updatedData: any): Promise<void> {
@@ -136,7 +136,11 @@ export class UserService {
     }
 
     const userDoc = userSnapshot.docs[0];
-    return { id: userDoc.id, ...userDoc.data() };
+    return {
+      id: userDoc.id,
+      ...userDoc.data(),
+      roles: userDoc.data()?.roles?.length ? userDoc.data()?.roles : ['user'],
+    };
   }
   async validateUser(email: string, password: string): Promise<any | null> {
     const user = await this.findOne(email);

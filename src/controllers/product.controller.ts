@@ -8,16 +8,27 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateProductDto, DeleteMultiDto, Paging } from './dto';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ProductService } from 'src/services';
+import { CreateProductDto, DeleteMultiDto, Paging } from './dto';
 
+@ApiBearerAuth('access-token')
 @Controller('products')
+@UseGuards(JwtAuthGuard)
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Create a new product' })
   @ApiBody({ type: CreateProductDto })
   @ApiResponse({ status: 201, description: 'Product created successfully' })
@@ -27,6 +38,7 @@ export class ProductController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get product by ID' })
   @ApiResponse({ status: 200, description: 'Product retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Product not found' })
@@ -36,6 +48,7 @@ export class ProductController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update a product' })
   @ApiBody({ type: CreateProductDto })
   @ApiResponse({ status: 200, description: 'Product updated successfully' })
@@ -48,6 +61,7 @@ export class ProductController {
   }
 
   @Delete()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Delete  products' })
   @ApiBody({ type: DeleteMultiDto })
   @ApiResponse({ status: 200, description: 'Products deleted successfully' })
@@ -57,6 +71,7 @@ export class ProductController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get all products' })
   @ApiResponse({ status: 200, description: 'Products retrieved successfully' })
   async getAllProducts(@Param() params: Paging) {

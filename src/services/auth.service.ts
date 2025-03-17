@@ -17,14 +17,12 @@ export class AuthService {
   }
 
   async signIn(email: string, pass: string): Promise<{ access_token: string }> {
-    const user: { id: string; email: string } = await this.validateUser(
-      email,
-      pass,
-    );
+    const user: { id: string; email: string; roles: string[] } =
+      await this.validateUser(email, pass);
     if (!user) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, username: user.email };
+    const payload = { sub: user.id, email: user.email, roles: user.roles };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

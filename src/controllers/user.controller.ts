@@ -11,16 +11,29 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { UserService } from 'src/services/user.service';
 import { CreateUserDto, DeleteMultiDto, Paging, ResponseListDto } from './dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/auth/role.enum';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
 
+@ApiBearerAuth('access-token')
 @Controller('users')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, description: 'User created successfully' })
@@ -33,6 +46,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({ status: 200, description: 'User retrieved successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
@@ -42,6 +56,8 @@ export class UserController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Update a user' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
@@ -54,6 +70,8 @@ export class UserController {
   }
 
   @Delete()
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Delete  users' })
   @ApiBody({ type: DeleteMultiDto })
   @ApiResponse({ status: 200, description: 'Users deleted successfully' })
@@ -64,6 +82,7 @@ export class UserController {
 
   @Get()
   @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({
     status: 200,

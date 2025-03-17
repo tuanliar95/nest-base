@@ -10,16 +10,31 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateCategoryDto, DeleteMultiDto, Paging } from './dto';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { CategoryService } from 'src/services';
+import { CreateCategoryDto, DeleteMultiDto, Paging } from './dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/auth/role.enum';
 
+@ApiBearerAuth('access-token')
 @Controller('categories')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Create a new category' })
   @ApiBody({ type: CreateCategoryDto })
   @ApiResponse({ status: 201, description: 'Category created successfully' })
@@ -29,6 +44,7 @@ export class CategoryController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get category by ID' })
   @ApiResponse({ status: 200, description: 'Category retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Category not found' })
@@ -38,6 +54,8 @@ export class CategoryController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Update a category' })
   @ApiBody({ type: CreateCategoryDto })
   @ApiResponse({ status: 200, description: 'Category updated successfully' })
@@ -50,6 +68,8 @@ export class CategoryController {
   }
 
   @Delete()
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Delete  categories' })
   @ApiBody({ type: DeleteMultiDto })
   @ApiResponse({ status: 200, description: 'Categories deleted successfully' })
@@ -59,6 +79,7 @@ export class CategoryController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get all categories' })
   @ApiResponse({
     status: 200,
