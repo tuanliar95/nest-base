@@ -10,6 +10,7 @@ dotenv.config({
 async function bootstrap() {
   console.log('hahahahah', process.env.NODE_ENV);
   console.log('JWT_SECRET:', process.env.JWT_SECRET); // Log the JWT_SECRET to ensure it's loaded
+  console.log('API_KEY:', process.env.API_KEY); // Log the JWT_SECRET to ensure it's loaded
 
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
