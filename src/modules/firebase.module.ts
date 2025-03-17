@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import { Module, Global } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore/lite';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Global()
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env', // Default to .env if not in production
-      isGlobal: true, // Makes ConfigModule available throughout the app
-    }),
-  ],
+  // imports: [
+  //   ConfigModule.forRoot({
+  //     envFilePath: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env', // Default to .env if not in production
+  //     isGlobal: true, // Makes ConfigModule available throughout the app
+  //   }),
+  // ],
   providers: [
     {
       provide: 'FIRESTORE_DB',

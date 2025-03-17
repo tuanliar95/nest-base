@@ -3,6 +3,8 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './modules/app.module';
 async function bootstrap() {
+  console.log('hahahahah', process.env.NODE_ENV);
+
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   const config = new DocumentBuilder()
