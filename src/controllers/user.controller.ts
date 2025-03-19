@@ -53,7 +53,7 @@ export class UserController {
     if (existingUser) {
       throw new ConflictException('Email already exists');
     } else {
-      const { id: userId, ...payload } = body;
+      const { ...payload } = body;
       await this.userService.createUser(payload);
       return { message: 'User created successfully' };
     }
