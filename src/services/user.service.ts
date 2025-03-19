@@ -141,10 +141,11 @@ export class UserService {
     }
 
     const userDoc = userSnapshot.docs[0];
+    const { password, ...rest } = userDoc.data();
     return {
       id: userDoc.id,
-      ...userDoc.data(),
-      roles: userDoc.data()?.roles?.length ? userDoc.data()?.roles : ['user'],
+      ...rest,
+      roles: rest?.roles?.length ? rest?.roles : ['user'],
     };
   }
 

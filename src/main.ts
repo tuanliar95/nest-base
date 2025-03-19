@@ -8,10 +8,6 @@ dotenv.config({
   path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env',
 });
 async function bootstrap() {
-  console.log('hahahahah', process.env.NODE_ENV);
-  console.log('JWT_SECRET:', process.env.JWT_SECRET); // Log the JWT_SECRET to ensure it's loaded
-  console.log('API_KEY:', process.env.API_KEY); // Log the JWT_SECRET to ensure it's loaded
-
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   const config = new DocumentBuilder()
@@ -29,7 +25,6 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

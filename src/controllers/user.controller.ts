@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -7,10 +8,12 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -19,19 +22,25 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { UserService } from 'src/services/user.service';
-import { CreateUserDto, DeleteMultiDto, Paging, ResponseListDto } from './dto';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { Role } from 'src/auth/role.enum';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Role } from 'src/auth/role.enum';
+import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { UserService } from 'src/services/user.service';
+import {
+  CreateUserDto,
+  DeleteMultiDto,
+  Paging,
+  ResponseListDto,
+  UpdateUserDto,
+} from './dto';
 
 @ApiBearerAuth('access-token')
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   @UseGuards(AuthGuard)
@@ -49,6 +58,18 @@ export class UserController {
       return { message: 'User created successfully' };
     }
   }
+  @Get('me')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Get user by Token' })
+  @ApiResponse({ status: 200, description: 'User retrieved successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  getMe(@Request() req: any): Promise<CreateUserDto> {
+    const user = req.user;
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
 
   @Get(':id')
   @UseGuards(AuthGuard)
@@ -64,11 +85,11 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Update a user' })
-  @ApiBody({ type: CreateUserDto })
+  @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
   async updateUser(
     @Param('id') id: string,
-    @Body() body: Partial<CreateUserDto>,
+    @Body() body: Partial<UpdateUserDto>,
   ) {
     const { id: userId, ...payload } = body;
     await this.userService.updateUser(id, payload);
