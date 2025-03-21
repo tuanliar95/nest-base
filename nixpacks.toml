@@ -2,4 +2,4 @@
 nixPkgs = ["nodejs", "yarn"]
 
 [phases.install]
-cmds = ["rm -rf node_modules package-lock.json yarn.lock", "yarn"]
+cmds = ["rm -rf node_modules package-lock.json yarn.lock", "yarn install --ignore-scripts"]
