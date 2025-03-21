@@ -1,5 +1,0 @@
-[phases.setup]
-nixPkgs = ["nodejs", "yarn"]
-
-[phases.install]
-cmds = ["rm -rf node_modules package-lock.json yarn.lock", "npm install -g nx", "yarn install"]
