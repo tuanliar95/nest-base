@@ -40,7 +40,8 @@
       "exclude": [
         "apps/my-nestjs-app-e2e/**/*",
         "my-api-e2e/**/*",
-        "product-api-e2e/**/*"
+        "product-api-e2e/**/*",
+        "order-api-e2e/**/*"
       ]
     }
   ]
