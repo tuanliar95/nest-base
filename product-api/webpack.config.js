@@ -15,6 +15,7 @@ module.exports = {
       outputHashing: 'none',
       generatePackageJson: true,
       optimization: {
+        usedExports: true,
         minimize: true,
         splitChunks: {
           chunks: 'all',
