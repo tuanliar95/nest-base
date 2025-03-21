@@ -2325,7 +2325,7 @@
     nx "19.8.4"
     tslib "^2.3.0"
 
-"@nrwl/workspace@19.8.4":
+"@nrwl/workspace@19.8.4", "@nrwl/workspace@^19.8.4":
   version "19.8.4"
   resolved "https://registry.yarnpkg.com/@nrwl/workspace/-/workspace-19.8.4.tgz#3bb0f36fd412c1dd2848fead1b96a1bd8731fb00"
   integrity sha512-ZdzVMuVDkD5nYRXkvBIZe6yUTcbllYanoIh38a7l3MfPqw+2cFY2Cr9uPNfH3LXpzZYgKcr4vffYWwLXeIwbjw==
@@ -7931,7 +7931,7 @@ nx@19.8.4:
     "@nx/nx-win32-arm64-msvc" "19.8.4"
     "@nx/nx-win32-x64-msvc" "19.8.4"
 
-nx@20.6.2:
+nx@20.6.2, nx@^20.6.2:
   version "20.6.2"
   resolved "https://registry.yarnpkg.com/nx/-/nx-20.6.2.tgz#24d9c23dfd5cb4889ff30b7ab129332b4200c380"
   integrity sha512-FvdDpBRgTdlTO0ixFjtZnMsp25MMBUzHcylVphekVY4vdFOnJ54f9Y64oncqcj70gyKX6Qn9g9+hEzV4bomYeQ==
