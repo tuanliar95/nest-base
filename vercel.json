@@ -1,15 +1,15 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "apps/product-api/main.ts",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "apps/product-api/main.ts"
-      }
-    ]
-  }
+  "version": 2,
+  "builds": [
+    {
+      "src": "dist/apps/order-api/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/apps/order-api/main.js"
+    }
+  ]
+}

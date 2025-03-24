@@ -2,7 +2,9 @@
   "name": "@nest-base/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "build": "nx build product-api --configuration=production"
+  },
   "engines": {
     "npm": ">=10.0.0",
     "node": ">=20.0.0"
