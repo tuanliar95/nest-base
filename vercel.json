@@ -1,15 +1,10 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "dist/order-api/main.js",
-      "use": "@vercel/node"
-    }
-  ],
+
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "dist/apps/order-api/main.js"
+      "dest": "dist/order-api/main.js"
     }
   ]
 }

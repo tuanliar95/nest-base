@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    
+  
+    "build:order-api": "nx build order-api --configuration=production",
+    "postbuild:order-api": "cp package.json dist/order-api/package.json"
   },
   "engines": {
     "npm": ">=10.0.0",
