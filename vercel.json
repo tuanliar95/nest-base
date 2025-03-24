@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/apps/order-api/main.js",
+      "src": "dist/order-api/main.js",
       "use": "@vercel/node"
     }
   ],

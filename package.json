@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "nx build product-api --configuration=production"
+    
   },
   "engines": {
     "npm": ">=10.0.0",
