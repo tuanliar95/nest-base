@@ -139,4 +139,11 @@ export class ProductService {
       rows: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
     };
   }
+
+  
+  getData(): { message: string } {
+    return { message: 'Hello Product API' };
+  }
+
+
 }
