@@ -1,0 +1,18 @@
+# Loại trừ node_modules để giảm kích thước
+node_modules/
+
+# Loại trừ các file log
+*.log
+
+# Loại trừ thư mục build nếu không cần deploy
+build/
+
+# Loại trừ toàn bộ thư mục dist
+dist/**
+
+# Chỉ giữ lại thư mục dist/order-api và toàn bộ nội dung bên trong nó
+!dist/order-api
+!dist/order-api/**
+
+# Bỏ qua file cấu hình môi trường
+.env
